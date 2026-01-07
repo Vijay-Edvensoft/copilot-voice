@@ -147,7 +147,7 @@ const ChatInput = (props: Props) => {
       console.log(listening);
       await SpeechRecognition.stopListening();
       setIsRecording(false);
-      console.log("🛑 Stopping listening");
+      console.log("🛑 Stopping listening", isRecording);
     } else if (!listening) {
       console.log("▶️ Starting listening");
 
