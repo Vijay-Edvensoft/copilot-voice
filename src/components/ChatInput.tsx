@@ -91,25 +91,69 @@ const ChatInput = (props: Props) => {
   //   dispatch(resetGeneratedMessage());
   //   setEditChat(null);
   // };
-  const handleRecording = () => {
+  // const handleRecording = () => {
+  //   console.log("🎤 Click triggered");
+  //   if (!browserSupportsSpeechRecognition) {
+  //     console.error("❌ Browser does not support SpeechRecognition");
+  //     toast.error("Your browser does not support speech recognition.");
+  //     return;
+  //   }
+
+  //   if (listening) {
+  //     SpeechRecognition.stopListening();
+  //     // setIsRecording(true);
+  //   } else if (!listening) {
+  //     if (transcript) {
+  //       resetTranscript();
+  //     }
+  //     resetTranscript();
+  //     SpeechRecognition.startListening({
+  //       continuous: true,
+  //       language: navigator.language,
+  //     });
+  //     // setIsRecording(false);
+  //   }
+  // };
+
+  const handleRecording = async () => {
+    console.log("🎤 Click triggered");
+
+    // Browser support check
     if (!browserSupportsSpeechRecognition) {
-      toast.error("Your browser does not support speech recognition.");
+      console.error("❌ Browser does not support SpeechRecognition");
+      toast.error("Your browser does not support speech recognition");
       return;
     }
 
-    if (listening) {
-      SpeechRecognition.stopListening();
-      // setIsRecording(true);
-    } else if (!listening) {
-      if (transcript) {
-        resetTranscript();
-      }
-      resetTranscript();
-      SpeechRecognition.startListening({
-        continuous: true,
-        language: navigator.language,
+    // Permission check (CRITICAL)
+    try {
+      const permission = await navigator.permissions.query({
+        name: "microphone" as PermissionName,
       });
-      // setIsRecording(false);
+      console.log("🎙️ Mic permission:", permission.state);
+    } catch (err) {
+      console.warn("⚠️ Permissions API not supported", err);
+    }
+
+    console.log("Listening before click:", listening);
+
+    if (listening) {
+      console.log("🛑 Stopping listening");
+      SpeechRecognition.stopListening();
+    } else {
+      console.log("▶️ Starting listening");
+
+      resetTranscript();
+
+      try {
+        SpeechRecognition.startListening({
+          continuous: true,
+          language: navigator.language || "en-US",
+        });
+      } catch (err) {
+        console.error("❌ startListening failed:", err);
+        toast.error("Failed to start speech recognition");
+      }
     }
   };
 
