@@ -138,8 +138,9 @@ const ChatInput = (props: Props) => {
     console.log("Listening before click:", listening);
 
     if (listening) {
-      console.log("🛑 Stopping listening");
+      console.log(listening);
       SpeechRecognition.stopListening();
+      console.log("🛑 Stopping listening");
     } else {
       console.log("▶️ Starting listening");
 
