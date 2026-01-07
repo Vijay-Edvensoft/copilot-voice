@@ -147,7 +147,7 @@ const ChatInput = (props: Props) => {
       resetTranscript();
 
       try {
-        SpeechRecognition.startListening({
+        await SpeechRecognition.startListening({
           continuous: true,
           language: navigator.language || "en-US",
         });
