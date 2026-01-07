@@ -1,6 +1,8 @@
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch } from "@/redux/store/store";
 import { authState } from "@/redux/slice/authSlice";
+// import createSpeechServicesPonyfill from "web-speech-cognitive-services";
+import { createSpeechRecognitionPonyfill } from "web-speech-cognitive-services";
 
 import {
   chatState,
@@ -50,6 +52,7 @@ const ChatInput = (props: Props) => {
   const dispatch = useDispatch<AppDispatch>();
   const { user } = useSelector(authState);
   const { status, activeChat } = useSelector(chatState);
+
   const {
     transcript,
     resetTranscript,
@@ -194,6 +197,15 @@ const ChatInput = (props: Props) => {
   }, [transcript, setQuery]);
 
   useEffect(() => {
+    const { SpeechRecognition: AzureSpeechRecognition } =
+      createSpeechRecognitionPonyfill({
+        credentials: {
+          region: "centralindia",
+          subscriptionKey: "YOUR_KEY",
+        },
+      });
+
+    SpeechRecognition.applyPolyfill(AzureSpeechRecognition);
     return () => {
       dispatch(setActiveChat(null));
     };
