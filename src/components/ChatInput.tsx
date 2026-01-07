@@ -8,7 +8,13 @@ import {
   retryQuestion,
   setActiveChat,
 } from "@/redux/slice/chatSlice";
-import { useEffect, useRef, type Dispatch, type SetStateAction } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type Dispatch,
+  type SetStateAction,
+} from "react";
 import ChatMessages from "./ChatMessages";
 
 import SpeechRecognition, {
@@ -53,7 +59,7 @@ const ChatInput = (props: Props) => {
   // const [query, setQuery] = useState<string>(editChat ? editChat.query : "");
   // const { isRecording, startRecording, stopRecording, transcript } =
   //   useRecorder();
-
+  const [isRecording, setIsRecording] = useState(false);
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   // const visualizerRef = useRef<HTMLCanvasElement>(null);
 
@@ -137,9 +143,10 @@ const ChatInput = (props: Props) => {
 
     console.log("Listening before click:", listening);
 
-    if (listening) {
+    if (listening && isRecording) {
       console.log(listening);
-      SpeechRecognition.stopListening();
+      await SpeechRecognition.stopListening();
+      setIsRecording(false);
       console.log("🛑 Stopping listening");
     } else if (!listening) {
       console.log("▶️ Starting listening");
@@ -147,6 +154,7 @@ const ChatInput = (props: Props) => {
       resetTranscript();
 
       try {
+        setIsRecording(true);
         await SpeechRecognition.startListening({
           continuous: true,
           language: navigator.language || "en-US",
